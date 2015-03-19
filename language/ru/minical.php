@@ -1,7 +1,7 @@
 <?php
 /**
 *
-* @package phpBB Extension - Nav Links In Header
+* @package phpBB Extension - Mini Calendar
 * @copyright (c) 2015 Sheer
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
