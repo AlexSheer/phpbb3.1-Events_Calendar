@@ -1,0 +1,29 @@
+<!-- INCLUDE overall_header.html -->
+
+<a name="maincontent"></a>
+
+<h1>{L_ACP_MINICAL}</h1>
+<p>{L_ACP_MINICAL_EXPLAIN}</p>
+<form id="minical" method="post" action="{U_ACTION}">
+	<fieldset>
+	<legend>{L_ACP_MINICAL_MANAGE}</legend>
+		<dl>
+			<dt><label for="minical_enable">{L_MINICAL_ENABLE}:</label><br /><span>{L_MINICAL_ENABLE_EXPLAIN}</span></dt>
+			<dd>
+				<label><input name="minical_enable" value="1" {S_CHECKED_ENABLE} class="radio" type="radio"> {L_YES}</label>
+				<label><input name="minical_enable" value="0" {S_CHECKED_DISABLE} class="radio" type="radio"> {L_NO}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="minical_forums">{L_MINICAL_FORUMS}</label><br /><span>{L_MINICAL_FORUMS_EXPLAIN}</span></dt>
+			<dd><input name="minical_forums" type="text" value="{MINICAL_FORUMS}"></dd>
+		</dl>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		</p>
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+
+<!-- INCLUDE overall_footer.html -->
