@@ -1,0 +1,41 @@
+<!-- IF S_NEW_MESSAGE and S_EVENT_ENABLE -->
+	<link href="{ROOT_PATH}ext/sheer/minical/styles/all/theme/datepickr.css?assets_version={T_ASSETS_VERSION}" rel="stylesheet" type="text/css" media="screen, projection" />
+	<link href="{ROOT_PATH}ext/sheer/minical/styles/all/theme/tool_tip.css?assets_version={T_ASSETS_VERSION}" rel="stylesheet" type="text/css" media="screen, projection" />
+	<link href="{ROOT_PATH}ext/sheer/minical/styles/all/theme/tool_tip_resp.css?assets_version={T_ASSETS_VERSION}" rel="stylesheet" type="text/css" media="only screen and (max-width: 700px), only screen and (max-device-width: 700px)" />
+	<dl style="clear: left;">
+		<dt><label for="event_title">{L_EVENT_TITLE}{L_COLON}</label></dt>
+		<dd>
+			<!-- IF S_POST_MODE -->{L_ADD_EVENT_EXPLAIN}<br /><!-- ENDIF -->
+			<input style="margin-top: 5px;" name="event_title" id="event_title" size="45" maxlength="120" value="{EVENT_TITLE}" class="inputbox autowidth" />
+			<!-- IF S_DELETE_ENABLE -->&nbsp;<input name="delete_event" type="checkbox" value="ON" {S_DELETE_CHECKED}> {L_DELETE_EVENT}<!-- ENDIF -->
+		</dd>
+	</dl>
+	<dl class="mini">
+		<dt><label for="event_start">{L_START_DATE}{L_COLON}</label></dt>
+		<dd>
+			<input title="{L_START_DATE}" class="inputbox autowidth" name="event_start" id="event_start" value="{EVENT_START}" style="margin-bottom:5px;" placeholder="{L_SELECT_DATE}">
+		</dd>
+	</dl>
+
+	<input type="checkbox" value="selected" id="someID" class="tooltip-input" name="advanced" {S_ADVANCED_CHECKED}>
+	<div class="advanced">{L_ADVANCED_FORM}</div>
+	<dl role="tooltip" id="tooltipID" class="tooltip-content" style="clear: left;">
+		<dt><label for="event_end">{L_END_DATE}{L_COLON}</label></dt>
+		<dd class="mini">
+			<input title="{L_END_DATE}" class="inputbox autowidth" name="event_end" id="event_end" value="{EVENT_END}" style="margin-bottom:5px;" placeholder="{L_SELECT_DATE}">
+		</dd>
+	</dl>
+	<script src="{ROOT_PATH}ext/sheer/minical/styles/all/datepickr.js?assets_version={T_ASSETS_VERSION}"></script>
+	<script>
+		datepickr('[title="{L_SELECT_DATE}"]');
+
+		datepickr.init.prototype.l10n.firstDayOfWeek = 1;
+		datepickr.init.prototype.l10n.months.longhand = ['{JAN}', '{FEB}', '{MAR}', '{APR}', '{MAY}', '{JUN}', '{JUL}', '{AUG}', '{SEP}', '{OCT}', '{NOV}', '{DEC}'];
+		datepickr.init.prototype.l10n.weekdays.shorthand = ['{SUN}', '{MON}', '{TUE}', '{WED}', '{THU}', '{FRI}', '{SAT}'];
+		datepickr('#event_start', { dateFormat: 'd-m-Y'});
+
+		datepickr.init.prototype.l10n.months.longhand = ['{JAN}', '{FEB}', '{MAR}', '{APR}', '{MAY}', '{JUN}', '{JUL}', '{AUG}', '{SEP}', '{OCT}', '{NOV}', '{DEC}'];
+		datepickr.init.prototype.l10n.weekdays.shorthand = ['{SUN}', '{MON}', '{TUE}', '{WED}', '{THU}', '{FRI}', '{SAT}'];
+		datepickr('#event_end', { dateFormat: 'd-m-Y'});
+	</script>
+<!-- ENDIF -->
