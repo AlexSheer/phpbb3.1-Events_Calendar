@@ -1,0 +1,25 @@
+{
+    "name": "sheer/minical",
+    "type": "phpbb-extension",
+    "description": "Events Calendar",
+    "homepage": "http://phpbbguru.net",
+    "version": "0.0.1",
+    "time": "2015-03-16",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Sheer",
+            "homepage": "http://phpbbguru.net",
+            "role": "Support team"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "extra": {
+        "display-name": "Mini Calendar",
+        "soft-require": {
+            "phpbb/phpbb": "3.1.*@dev"
+        }
+    }
+}
