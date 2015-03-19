@@ -1,0 +1,21 @@
+.tooltip-input {
+	margin: -24px -10px 10px 316px;
+	position: absolute;
+} /*Hide input element*/
+
+.tooltip-content {
+}
+.tooltip-input:not(checked) ~ .tooltip-content {
+	display: none;
+}
+.tooltip-input:checked ~ .tooltip-content {
+	display: block;
+}
+.mini
+{
+}
+.advanced
+{
+	position: absolute;
+	margin: -26px 10px 20px 336px;
+}
