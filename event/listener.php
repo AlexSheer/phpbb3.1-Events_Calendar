@@ -65,12 +65,14 @@ class listener implements EventSubscriberInterface
 	public function __construct(
 		\phpbb\template\template $template,
 		\phpbb\request\request_interface $request,
-		\phpbb\user $user, \phpbb\auth\auth $auth,
+		\phpbb\user $user,
+		\phpbb\auth\auth $auth,
 		\phpbb\db\driver\driver_interface $db,
 		\phpbb\config\config $config,
 		$table_prefix,
 		$phpbb_root_path,
-		$php_ext
+		$php_ext,
+		$minical_table
 	)
 	{
 		$this->template = $template;
@@ -82,8 +84,7 @@ class listener implements EventSubscriberInterface
 		$this->table_prefix = $table_prefix;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-
-		define ('EVENTS_TABLE', $this->table_prefix . 'events');
+		$this->minical_table = $minical_table;
 	}
 
 	public function load_language_on_setup($event)
@@ -111,7 +112,7 @@ class listener implements EventSubscriberInterface
 			$dt = $this->user->create_datetime('now', $utc);
 			$offset = $dt->getOffset();
 			$sql = 'SELECT *
-				FROM '. EVENTS_TABLE .'
+				FROM '. $this->minical_table .'
 				WHERE event_end > '. (time() + $offset) . '
 				ORDER BY event_start ';
 			$result = $this->db->sql_query($sql);
@@ -202,7 +203,7 @@ class listener implements EventSubscriberInterface
 		}
 
 		$sql = 'SELECT event_id
-			FROM ' . EVENTS_TABLE . '
+			FROM ' . $this->minical_table . '
 			WHERE topic_id = ' . $data['topic_id'] . '';
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
@@ -231,11 +232,11 @@ class listener implements EventSubscriberInterface
 
 			if ($mode == 'edit' && $row['event_id'] && $title)
 			{
-				$sql = 'UPDATE ' . EVENTS_TABLE . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) .' WHERE topic_id = '. $data['topic_id'] .'';
+				$sql = 'UPDATE ' . $this->minical_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) .' WHERE topic_id = '. $data['topic_id'] .'';
 			}
 			else if (($mode == 'post' || $mode == 'edit') && !$row['event_id'] && $title)
 			{
-				$sql = 'INSERT INTO ' . EVENTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+				$sql = 'INSERT INTO ' . $this->minical_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			}
 			$this->db->sql_query($sql);
 		}
@@ -255,7 +256,7 @@ class listener implements EventSubscriberInterface
 		}
 
 		$sql = 'SELECT *
-			FROM ' . EVENTS_TABLE . '
+			FROM ' . $this->minical_table . '
 			WHERE topic_id = ' . $event['topic_id'] . '';
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
@@ -296,7 +297,7 @@ class listener implements EventSubscriberInterface
 			if ($confirm)
 			{
 				$sql = 'DELETE
-					FROM ' . EVENTS_TABLE . '
+					FROM ' . $this->minical_table . '
 					WHERE post_id = ' . $event['post_id'] . '';
 				$this->db->sql_query($sql);
 			}
