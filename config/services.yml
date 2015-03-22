@@ -1,3 +1,6 @@
+imports:
+    - { resource: tables.yml }
+
 services:
     sheer.minical.listener:
         class: sheer\minical\event\listener
@@ -11,5 +14,19 @@ services:
             - %core.table_prefix%
             - %core.root_path%
             - %core.php_ext%
+            - %tables.minical%
         tags:
             - { name: event.listener }
+
+    sheer.minical.cron.task.tidy_minical:
+        class: sheer\minical\cron\task\tidy_minical
+        arguments:
+            - @config
+            - @dbal.conn
+            - @user
+            - @log
+            - %tables.minical%
+        calls:
+            - [set_name, [cron.task.core.sheer_tidy_minical]]
+        tags:
+            - { name: cron.task }
