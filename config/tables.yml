@@ -1,0 +1,2 @@
+parameters:
+    tables.minical: %core.table_prefix%events
