@@ -57,6 +57,8 @@ class minical_0_0_1 extends \phpbb\db\migration\migration
 			array('config.add', array('minical_version', '0.0.1')),
 			array('config.add', array('minical_enable', '0')),
 			array('config.add', array('minical_forums', '')),
+			array('config.add', array('events_prune_gc', '86400', '0')),
+			array('config.add', array('events_prune_last_gc', '0', '1')),
 
 			// Add permission
 			array('permission.add', array('u_add_event', true)),
