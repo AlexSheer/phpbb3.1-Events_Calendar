@@ -61,7 +61,7 @@ class tidy_minical extends \phpbb\cron\task\base
 	{
 		$sql = 'DELETE
 			FROM ' . $this->minical_table . '
-			WHERE event_end < ' . time() . '';
+			WHERE event_end < ' . (time() - 86400) . '';
 		$this->db->sql_query($sql);
 		$this->config->set('events_prune_last_gc', time(), true);
 	}
