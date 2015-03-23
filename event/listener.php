@@ -113,7 +113,7 @@ class listener implements EventSubscriberInterface
 			$offset = $dt->getOffset();
 			$sql = 'SELECT *
 				FROM '. $this->minical_table .'
-				WHERE event_end > '. (time() + $offset) . '
+				WHERE event_end > '. ((time() + $offset) - 86400) . '
 				ORDER BY event_start ';
 			$result = $this->db->sql_query($sql);
 			while($row = $this->db->sql_fetchrow($result))
@@ -161,28 +161,21 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 
-		$error = array();
-
 		$event_start = strtotime($this->request->variable('event_start', ''));
 		$event_end = strtotime($this->request->variable('event_end', ''));
 		$title = $this->request->variable('event_title', '', true);
 
 		if ($event_end && $event_end < $event_start)
 		{
-			$error[] = $this->user->lang['END_DATE_ERROR'];
+			$event['error'] = array($this->user->lang['END_DATE_ERROR']);
 		}
-		if (($event_end && $event_end < time()) || $event_start < time())
+		if (($event_end && $event_end < time()) || $event_start < (time() - (time() - mktime(0, 0, 0))))
 		{
-			$error[] = $this->user->lang['START_DATE_ERROR'];
+			$event['error'] = array($this->user->lang['START_DATE_ERROR']);
 		}
 		if (($event_end || $event_start) && empty($title))
 		{
-			$error[] = $this->user->lang['TITLE_TOO_SHORT'];
-		}
-
-		if (sizeof($error))
-		{
-			$event['error'] = $error;
+			$event['error'] = array($this->user->lang['TITLE_TOO_SHORT']);
 		}
 	}
 
