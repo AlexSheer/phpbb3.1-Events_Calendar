@@ -122,7 +122,7 @@ class listener implements EventSubscriberInterface
 					'START'		=> $this->user->format_date(($row['event_start'] + $offset), 'l, j F Y'),
 					'END'		=> ($row['event_start'] != $row['event_end']) ? $this->user->format_date(($row['event_end'] + $offset), 'l, j F Y') : '',
 					'TITLE'		=> $row['event_title'],
-					'U_EVENT'	=> append_sid("{$this->phpbb_root_path}viewtopic.$this->php_ext", 't=' . $row['topic_id'] . '&amp;f=' . $row['forum_id'] . '')
+					'U_EVENT'	=> append_sid("{$this->phpbb_root_path}viewtopic.$this->php_ext", 'f=' . $row['forum_id'] . '&amp;t=' . $row['topic_id'] . '')
 					)
 				);
 			}
