@@ -30,7 +30,6 @@ class listener implements EventSubscriberInterface
 			'core.page_header'						=> 'show_event',
 			'core.posting_modify_submission_errors'	=> 'check_event',
 			'core.submit_post_end'					=> 'add_event',
-			'core.modify_posting_parameters'		=> 'delete_event',
 			'core.posting_modify_template_vars'		=> 'edit_event',
 		);
 	}
@@ -164,15 +163,27 @@ class listener implements EventSubscriberInterface
 		$event_start = strtotime($this->request->variable('event_start', ''));
 		$event_end = strtotime($this->request->variable('event_end', ''));
 		$title = $this->request->variable('event_title', '', true);
+		$advanced = $this->request->variable('advanced', false);
+		if (!$advanced)
+		{
+			$event_end = $event_start;
+			$this->template->assign_vars(array(
+				'EVENT_END'			=> ($event_end != $event_start) ? $event_end : '',
+				'S_ADVANCED_CHECKED'=> '',
+			));
+		}
+		if($title)
+		{
+			if ($event_end && $event_end < $event_start)
+			{
+				$event['error'] = array($this->user->lang['END_DATE_ERROR']);
+			}
+			else if (($event_end && $event_end < time()) || $event_start < (time() - (time() - mktime(0, 0, 0))))
+			{
+				$event['error'] = array($this->user->lang['START_DATE_ERROR']);
+			}
+		}
 
-		if ($event_end && $event_end < $event_start)
-		{
-			$event['error'] = array($this->user->lang['END_DATE_ERROR']);
-		}
-		if (($event_end && $event_end < time()) || $event_start < (time() - (time() - mktime(0, 0, 0))))
-		{
-			$event['error'] = array($this->user->lang['START_DATE_ERROR']);
-		}
 		if (($event_end || $event_start) && empty($title))
 		{
 			$event['error'] = array($this->user->lang['TITLE_TOO_SHORT']);
@@ -195,16 +206,26 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 
-		$sql = 'SELECT event_id
-			FROM ' . $this->minical_table . '
-			WHERE topic_id = ' . $data['topic_id'] . '';
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
+		if($mode =='edit')
+		{
+			$sql = 'SELECT event_id
+				FROM ' . $this->minical_table . '
+				WHERE topic_id = ' . $data['topic_id'] . '';
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+		}
 
 		$title = $this->request->variable('event_title', '', true);
 
-		if ($mode == 'post' || $mode =='edit')
+		if ($this->request->variable('delete_event', false))
+		{
+			$sql = 'DELETE
+				FROM ' . $this->minical_table . '
+				WHERE post_id = ' . $data['post_id'] . '';
+			$this->db->sql_query($sql);
+		}
+		else if ($mode == 'post' || $mode =='edit')
 		{
 			$event_start = strtotime($this->request->variable('event_start', ''));
 			$event_end = strtotime($this->request->variable('event_end', ''));
@@ -257,10 +278,10 @@ class listener implements EventSubscriberInterface
 		$start	= (isset($row['event_start'])) ? $this->request->variable('event_start', date('d-m-Y', $row['event_start'])) : $this->request->variable('event_start', '');
 		$end	= (isset($row['event_end']))   ? $this->request->variable('event_end',   date('d-m-Y', $row['event_end'])) :   $this->request->variable('event_end', '');
 
-		$advanced = false;
-		if ($end != $start)
+		$advanced = $this->request->variable('advanced', false);
+		if (!$advanced)
 		{
-			$advanced = true;
+			$end = '';
 		}
 		if (empty($end))
 		{
@@ -272,28 +293,12 @@ class listener implements EventSubscriberInterface
 		$this->template->assign_vars(array(
 			'EVENT_TITLE'		=> (isset($row['event_title'])) ? $this->request->variable('event_title', $row['event_title'], true) : $this->request->variable('event_title', '', true),
 			'EVENT_START'		=> $start,
-			'EVENT_END'			=> ($end != $start) ? $end : '',
+			'EVENT_END'			=> ($end != $start || !$advanced) ? $end : '',
 			'S_EVENT_ENABLE'	=> true,
 			'S_DELETE_ENABLE'	=> ($event['mode'] == 'edit' && isset($row['event_start'])) ? true : false,
 			'S_DELETE_CHECKED'	=> ($this->request->variable('delete_event', false)) ? 'checked="checked"' : '',
 			'S_ADVANCED_CHECKED'=> ($advanced) ? 'checked="checked"' : '',
 			'S_POST_MODE'		=> ($event['mode'] == 'post') ? true : false,
 		));
-	}
-
-	public function delete_event($event)
-	{
-		$forums = explode(',', $this->config['minical_forums']);
-		if (in_array($event['forum_id'], $forums))
-		{
-			$confirm = $this->request->variable('confirm', false);
-			if ($confirm)
-			{
-				$sql = 'DELETE
-					FROM ' . $this->minical_table . '
-					WHERE post_id = ' . $event['post_id'] . '';
-				$this->db->sql_query($sql);
-			}
-		}
 	}
 }
