@@ -155,7 +155,7 @@ class listener implements EventSubscriberInterface
 	public function check_event($event)
 	{
 		$forums = explode(',', $this->config['minical_forums']);
-		if (!in_array($event['forum_id'], $forums))
+		if (!in_array($event['forum_id'], $forums) || $this->request->variable('delete_event', false))
 		{
 			return;
 		}
