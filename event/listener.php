@@ -163,15 +163,7 @@ class listener implements EventSubscriberInterface
 		$event_start = strtotime($this->request->variable('event_start', ''));
 		$event_end = strtotime($this->request->variable('event_end', ''));
 		$title = $this->request->variable('event_title', '', true);
-		$advanced = $this->request->variable('advanced', false);
-		if (!$advanced)
-		{
-			$event_end = $event_start;
-			$this->template->assign_vars(array(
-				'EVENT_END'			=> ($event_end != $event_start) ? $event_end : '',
-				'S_ADVANCED_CHECKED'=> '',
-			));
-		}
+
 		if($title)
 		{
 			if ($event_end && $event_end < $event_start)
@@ -230,7 +222,7 @@ class listener implements EventSubscriberInterface
 			$event_start = strtotime($this->request->variable('event_start', ''));
 			$event_end = strtotime($this->request->variable('event_end', ''));
 
-			if(!$event_end || !$this->request->variable('advanced', false))
+			if(!$event_end || !$this->request->variable('cal_interval_date', false))
 			{
 				$event_end = $event_start;
 			}
@@ -278,27 +270,24 @@ class listener implements EventSubscriberInterface
 		$start	= (isset($row['event_start'])) ? $this->request->variable('event_start', date('d-m-Y', $row['event_start'])) : $this->request->variable('event_start', '');
 		$end	= (isset($row['event_end']))   ? $this->request->variable('event_end',   date('d-m-Y', $row['event_end'])) :   $this->request->variable('event_end', '');
 
-		$advanced = $this->request->variable('advanced', false);
-		if (!$advanced)
+		($end == $start) ? $cal_interval_date = 0 : $cal_interval_date = 1;
+
+		if ($event['preview'])
 		{
-			$end = '';
-		}
-		if (empty($end))
-		{
-			$advanced = false;
+			$cal_interval_date = $this->request->variable('cal_interval_date', 0);
 		}
 
-		$advanced = $this->request->variable('advanced', $advanced);
+		$cal_interval_date = $this->request->variable('cal_interval_date', $cal_interval_date);
 
 		$this->template->assign_vars(array(
 			'EVENT_TITLE'		=> (isset($row['event_title'])) ? $this->request->variable('event_title', $row['event_title'], true) : $this->request->variable('event_title', '', true),
 			'EVENT_START'		=> $start,
-			'EVENT_END'			=> ($end != $start || !$advanced) ? $end : '',
+			'EVENT_END'			=> ($end != $start) ? $end : '',
 			'S_EVENT_ENABLE'	=> true,
 			'S_DELETE_ENABLE'	=> ($event['mode'] == 'edit' && isset($row['event_start'])) ? true : false,
 			'S_DELETE_CHECKED'	=> ($this->request->variable('delete_event', false)) ? 'checked="checked"' : '',
-			'S_ADVANCED_CHECKED'=> ($advanced) ? 'checked="checked"' : '',
 			'S_POST_MODE'		=> ($event['mode'] == 'post') ? true : false,
+			'ADVANCED_FORM_ON'	=> ($cal_interval_date) ? 'checked="checked"' : '',
 		));
 	}
 }
