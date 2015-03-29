@@ -270,7 +270,7 @@ class listener implements EventSubscriberInterface
 		$start	= (isset($row['event_start'])) ? $this->request->variable('event_start', date('d-m-Y', $row['event_start'])) : $this->request->variable('event_start', '');
 		$end	= (isset($row['event_end']))   ? $this->request->variable('event_end',   date('d-m-Y', $row['event_end'])) :   $this->request->variable('event_end', '');
 
-		($end == $start) ? $cal_interval_date = 0 : $cal_interval_date = 1;
+		$cal_interval_date = ($end == $start) ? 0 : 1;
 
 		if ($event['preview'])
 		{
