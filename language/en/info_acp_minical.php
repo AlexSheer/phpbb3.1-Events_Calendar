@@ -41,5 +41,5 @@ $lang = array_merge($lang, array(
 	'MINICAL_ENABLE_EXPLAIN'	=> 'If enabled, information about upcoming events and not expired will be displayed above header on each page. Users with the appropriate permission can create announcements of events.',
 	'ACP_MINICAL_MANAGE'		=> 'Manage',
 	'MINICAL_FORUMS'			=> 'Events forums ',
-	'MINICAL_FORUMS_EXPLAIN'	=> 'Comma-separated list identifiers are forums in which it will be possible to create events announcements.',
+	'MINICAL_FORUMS_EXPLAIN'	=> 'Forums in which it will be possible to create events announcements. To select multiple forums, use appropriate for your computer and browser combination of mouse and keyboard. Selected forums are displayed on a blue background.',
 ));
