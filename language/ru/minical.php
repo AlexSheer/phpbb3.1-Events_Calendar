@@ -31,4 +31,7 @@ $lang = array_merge($lang, array(
 	'TITLE_TOO_SHORT'	=> 'Заголовок события слишком короткий.',
 	'DELETE_EVENT'		=> 'Удалить событие',
 	'ADVANCED_FORM'		=> 'расширенный режим',
+	'SHIFT_END'			=> 'Анонсировать за',
+	'DAYS_SHFT'			=> 'дней до начала',
+	'SHIFT_END_EXPLAIN'	=> 'если 0, сразу же после создания анонса',
 ));
