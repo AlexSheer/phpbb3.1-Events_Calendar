@@ -19,10 +19,10 @@ class minical_module
 
 		$this->tpl_name = 'acp_minical_body';
 		$this->page_title = $user->lang('ACP_MINICAL');
-		$action		= request_var('action', '');
 
 		$forums = explode(',', $config['minical_forums']);
 
+		$action			= $request->variable('action', '');
 		$minical_forums	= $request->variable('forum_id', $forums);
 
 		$forum_list = make_forum_select(false, false, true, true, true, false, true);
