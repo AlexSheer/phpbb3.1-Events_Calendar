@@ -111,16 +111,23 @@ class listener implements EventSubscriberInterface
 			$dt = $this->user->create_datetime('now', $utc);
 			$offset = $dt->getOffset();
 			$sql = 'SELECT *
-				FROM '. $this->minical_table .'
+				FROM '. $this->minical_table . '
 				WHERE event_end > '. ((time() + $offset) - 86400) . '
 				ORDER BY event_start ';
 			$result = $this->db->sql_query($sql);
+			$count = 0;
 			while($row = $this->db->sql_fetchrow($result))
 			{
+				$rest_time = floor(($row['event_end'] - time() + $offset) / 86400);
+				if($rest_time <= $row['shift_end'] || !$row['shift_end'])
+				{
+					$count++;
+				}
+
 				$this->template->assign_block_vars('events', array(
 					'START'		=> $this->user->format_date(($row['event_start'] + $offset), 'l, j F Y'),
 					'END'		=> ($row['event_start'] != $row['event_end']) ? $this->user->format_date(($row['event_end'] + $offset), 'l, j F Y') : '',
-					'TITLE'		=> $row['event_title'],
+					'TITLE'		=> ($rest_time <= $row['shift_end'] || !$row['shift_end']) ? $row['event_title'] : '',
 					'U_EVENT'	=> append_sid("{$this->phpbb_root_path}viewtopic.$this->php_ext", 'f=' . $row['forum_id'] . '&amp;t=' . $row['topic_id'] . '')
 					)
 				);
@@ -148,6 +155,8 @@ class listener implements EventSubscriberInterface
 				'THU'	=> $this->user->lang(array('datetime', 'Thu')),
 				'FRI'	=> $this->user->lang(array('datetime', 'Fri')),
 				'SAT'	=> $this->user->lang(array('datetime', 'Sat')),
+
+				'S_SHOW_EVENT'	=> $count,
 			));
 		}
 	}
@@ -221,6 +230,7 @@ class listener implements EventSubscriberInterface
 		{
 			$event_start = strtotime($this->request->variable('event_start', ''));
 			$event_end = strtotime($this->request->variable('event_end', ''));
+			$shift_end = $this->request->variable('shift_end', '');
 
 			if(!$event_end || !$this->request->variable('cal_interval_date', false))
 			{
@@ -234,6 +244,7 @@ class listener implements EventSubscriberInterface
 				'forum_id'		=> $data['forum_id'],
 				'topic_id'		=> $data['topic_id'],
 				'post_id'		=> $data['post_id'],
+				'shift_end'		=> $shift_end,
 			);
 
 			if ($mode == 'edit' && $row['event_id'] && $title)
@@ -267,8 +278,10 @@ class listener implements EventSubscriberInterface
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
-		$start	= (isset($row['event_start'])) ? $this->request->variable('event_start', date('d-m-Y', $row['event_start'])) : $this->request->variable('event_start', '');
-		$end	= (isset($row['event_end']))   ? $this->request->variable('event_end',   date('d-m-Y', $row['event_end'])) :   $this->request->variable('event_end', '');
+
+		$start		= (isset($row['event_start'])) ? $this->request->variable('event_start', date('d-m-Y', $row['event_start'])) : $this->request->variable('event_start', '');
+		$end		= (isset($row['event_end'])) ? $this->request->variable('event_end', date('d-m-Y', $row['event_end'])) : $this->request->variable('event_end', '');
+		$shift_end	= (isset($row['shift_end'])) ? $this->request->variable('shift_end', $row['shift_end']) : $this->request->variable('shift_end', 0);
 
 		$cal_interval_date = ($end == $start) ? 0 : 1;
 
@@ -288,6 +301,7 @@ class listener implements EventSubscriberInterface
 			'S_DELETE_CHECKED'	=> ($this->request->variable('delete_event', false)) ? 'checked="checked"' : '',
 			'S_POST_MODE'		=> ($event['mode'] == 'post') ? true : false,
 			'ADVANCED_FORM_ON'	=> ($cal_interval_date) ? 'checked="checked"' : '',
+			'SHIFT_END'			=> $shift_end,
 		));
 	}
 }
