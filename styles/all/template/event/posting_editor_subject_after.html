@@ -18,7 +18,11 @@
 	</dl>
 
 	<input type="checkbox" name="cal_interval_date" value="1" id="someID" class="tooltip-input" {ADVANCED_FORM_ON}/>
-	<div class="advanced">{L_ADVANCED_FORM}</div>
+	<div class="advanced">
+		{L_ADVANCED_FORM}&nbsp
+		<strong>{L_SHIFT_END} </strong> <input type="number" id="shift_end" style="width: 42px;" maxlength="4" max="120" min="0" name="shift_end" value="{SHIFT_END}"> <strong>{L_DAYS_SHFT}</strong>
+		<br /><span style="margin-left: 33%;">{L_SHIFT_END_EXPLAIN}</span>
+	</div>
 	<dl role="tooltip" id="tooltipID" class="tooltip-content" style="clear: left;">
 		<dt><label for="event_end">{L_END_DATE}{L_COLON}</label></dt>
 		<dd class="mini">
