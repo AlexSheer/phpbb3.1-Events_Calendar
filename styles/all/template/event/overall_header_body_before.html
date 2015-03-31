@@ -1,4 +1,4 @@
-<!-- IF .events -->
+<!-- IF .events and S_SHOW_EVENT -->
 <style>
 #minical
 {
@@ -15,13 +15,15 @@
 <div style="background-color: #CADCEB; border-color: #CADCEB; margin-bottom: 6px; padding: 10px;" id="minical">
 	<div class="inner">
 	<!-- BEGIN events -->
-		<ul class="post-buttons" style="float:left; margin-right:10px">
-			<li>
-				<a href="{events.U_EVENT}" title="" class="button icon-button report-icon"></a>
-			</li>
-		</ul><a style="font-weight:bold; font-size:1.1em" href ="{events.U_EVENT}">{events.TITLE}</a>
-		<br /><span style="font-weight:bold; font-size:1.1em; color: #000">{events.START}<!-- IF events.END -->&nbsp;&raquo;&nbsp;{events.END}<!-- ENDIF --></span><br />
-	<!-- END events -->
+		<!-- IF events.TITLE -->
+			<ul class="post-buttons" style="float:left; margin-right:10px">
+				<li>
+					<a href="{events.U_EVENT}" title="" class="button icon-button report-icon"></a>
+				</li>
+			</ul><a style="font-weight:bold; font-size:1.1em" href ="{events.U_EVENT}">{events.TITLE}</a>
+			<br /><span style="font-weight:bold; font-size:1.1em; color: #000">{events.START}<!-- IF events.END -->&nbsp;&raquo;&nbsp;{events.END}<!-- ENDIF --></span><br />
+			<!-- ENDIF -->
+		<!-- END events -->
 	</div>
 </div>
 <!-- ENDIF -->
