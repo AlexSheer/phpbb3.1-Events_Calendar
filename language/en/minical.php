@@ -31,4 +31,7 @@ $lang = array_merge($lang, array(
 	'TITLE_TOO_SHORT'	=> 'Event title is too short.',
 	'DELETE_EVENT'		=> 'Delete event',
 	'ADVANCED_FORM'		=> 'advanced mode',
+	'SHIFT_END'			=> 'Announce',
+	'DAYS_SHFT'			=> 'days before',
+	'SHIFT_END_EXPLAIN'	=> 'if 0, immediately after the announcement',
 ));
