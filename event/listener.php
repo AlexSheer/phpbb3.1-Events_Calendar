@@ -118,7 +118,7 @@ class listener implements EventSubscriberInterface
 			$count = 0;
 			while($row = $this->db->sql_fetchrow($result))
 			{
-				$rest_time = floor(($row['event_end'] - time() + $offset) / 86400);
+				$rest_time = floor(($row['event_start'] - time() + $offset) / 86400);
 				if($rest_time <= $row['shift_end'] || !$row['shift_end'])
 				{
 					$count++;
