@@ -193,7 +193,9 @@ class listener implements EventSubscriberInterface
 
 	public function add_event($event)
 	{
-		if (!$this->auth->acl_gets('u_add_event') || $this->config['minical_enable'] == false)
+		$title = $this->request->variable('event_title', '', true);
+
+		if (!$this->auth->acl_gets('u_add_event') || $this->config['minical_enable'] == false || empty($title))
 		{
 			return;
 		}
@@ -216,8 +218,6 @@ class listener implements EventSubscriberInterface
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 		}
-
-		$title = $this->request->variable('event_title', '', true);
 
 		if ($this->request->variable('delete_event', false))
 		{
