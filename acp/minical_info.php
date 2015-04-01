@@ -23,6 +23,11 @@ class minical_module_info
 					'auth' => 'ext_sheer/minical && acl_a_board',
 					'cat' => array('ACP_MINICAL')
 				),
+				'events'	=> array(
+					'title' => 'ACP_MINICAL_EVENTS',
+					'auth' => 'ext_sheer/minical && acl_a_board',
+					'cat' => array('ACP_MINICAL')
+				),
 			),
 		);
 	}
