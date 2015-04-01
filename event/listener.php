@@ -101,6 +101,7 @@ class listener implements EventSubscriberInterface
 	{
 		if ($this->config['minical_enable'])
 		{
+/*
 			static $utc;
 			$time_zone = ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_timezone'] : $this->config['board_timezone'];
 
@@ -110,24 +111,28 @@ class listener implements EventSubscriberInterface
 			}
 
 			$dt = $this->user->create_datetime('now', $utc);
-			$offset = $dt->getOffset();
+*/
+			$offset = $this->get_time_offset();
 			$sql = 'SELECT *
 				FROM '. $this->minical_table . '
-				WHERE event_end > '. ((time() + $offset) - 86400) . '
+				WHERE event_end > '. (time() - 86400) . '
 				ORDER BY event_start ';
 			$result = $this->db->sql_query($sql);
 			$count = 0;
 			while($row = $this->db->sql_fetchrow($result))
 			{
-				$rest_time = floor(($row['event_start'] - time() + $offset) / 86400);
+				$rest_time = floor(($row['event_start'] - time()) / 86400);
 				if($rest_time <= $row['shift_end'] || !$row['shift_end'])
 				{
 					$count++;
 				}
 
+				$ff = $row['event_start'];
+				//print "$ff<br />";
+
 				$this->template->assign_block_vars('events', array(
-					'START'		=> $this->user->format_date(($row['event_start'] + $offset), 'l, j F Y'),
-					'END'		=> ($row['event_start'] != $row['event_end']) ? $this->user->format_date(($row['event_end'] + $offset), 'l, j F Y') : '',
+					'START'		=> $this->user->format_date(($row['event_start']), 'l, j F Y'),
+					'END'		=> ($row['event_start'] != $row['event_end']) ? $this->user->format_date(($row['event_end']), 'l, j F Y') : '',
 					'TITLE'		=> ($rest_time <= $row['shift_end'] || !$row['shift_end']) ? $row['event_title'] : '',
 					'U_EVENT'	=> append_sid("{$this->phpbb_root_path}viewtopic.$this->php_ext", 'f=' . $row['forum_id'] . '&amp;t=' . $row['topic_id'] . '')
 					)
@@ -229,6 +234,7 @@ class listener implements EventSubscriberInterface
 		}
 		else if ($mode == 'post' || $mode =='edit')
 		{
+			$this->request->variable('event_start', '');
 			$event_start = strtotime($this->request->variable('event_start', ''));
 			$event_end = strtotime($this->request->variable('event_end', ''));
 			$shift_end = $this->request->variable('shift_end', '');
@@ -238,14 +244,17 @@ class listener implements EventSubscriberInterface
 				$event_end = $event_start;
 			}
 
+			$offset = $this->get_time_offset();
+
 			$sql_ary = array(
 				'event_title'	=> $title,
-				'event_start'	=> $event_start,
-				'event_end'		=> $event_end,
+				'event_start'	=> $event_start + $offset,
+				'event_end'		=> $event_end + $offset,
 				'forum_id'		=> $data['forum_id'],
 				'topic_id'		=> $data['topic_id'],
 				'post_id'		=> $data['post_id'],
 				'shift_end'		=> $shift_end,
+				'author_id'		=> $this->user->data['user_id'],
 			);
 
 			if ($mode == 'edit' && $row['event_id'] && $title)
@@ -320,5 +329,20 @@ class listener implements EventSubscriberInterface
 				$this->db->sql_query($sql);
 			}
 		}
+	}
+
+	public function get_time_offset()
+	{
+		static $utc;
+		$time_zone = ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_timezone'] : $this->config['board_timezone'];
+
+		if (!isset($utc))
+		{
+			$utc = new \DateTimeZone($time_zone);
+		}
+
+		$dt = $this->user->create_datetime('now', $utc);
+		$offset = $dt->getOffset() + date('I') * 3600;
+		return($offset);
 	}
 }
