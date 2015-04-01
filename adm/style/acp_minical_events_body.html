@@ -1,0 +1,49 @@
+<!-- INCLUDE overall_header.html -->
+
+<a name="maincontent"></a>
+
+<h1>{L_ACP_MINICAL}</h1>
+<p>{L_ACP_MINICAL_ANOUNCE_EXPLAIN}</p>
+<!-- IF .events -->
+<form id="list" method="post" action="{U_ACTION}">
+	<fieldset>
+		<table class="table1 zebra-table">
+		<thead>
+			<tr>
+				<th>{L_EVENT_TITLE}</th>
+				<th>{L_START}</th>
+				<th>{L_END}</th>
+				<th>{L_EVENT_SHIFT}</th>
+				<th>{L_AUTHOR}</th>
+				<th>{L_TOPIC}</th>
+				<th>{L_MARK}</th>
+			</tr>
+		</thead>
+		<tbody>
+		<!-- BEGIN events -->
+			<tr>
+				<td>{events.TITLE}</td>
+				<td>{events.START}</td>
+				<td>{events.END}</td>
+				<td>{events.SHIFT} {L_DAYS}</td>
+				<td>{events.USER}</td>
+				<td><a href="{events.U_TOPIC}">{events.TOPIC}</a></td>
+				<td style="text-align: center;"><input name="ids[]" type="checkbox" value="{events.ID}"></td>
+			</tr>
+		<!-- END events -->
+		</tbody>
+		</table>
+	</fieldset>
+	<fieldset class="quick">
+		<p class="small"><a href="#" onclick="marklist('list', 'ids', true); return false;">{L_MARK_ALL}</a> :: <a href="#" onclick="marklist('list', 'ids', false); return false;">{L_UNMARK_ALL}</a></p>
+		<input class="button2" name="delall" value="{L_DELETE_ALL}" type="submit">&nbsp;
+		<input class="button2" name="delmarked" value="{L_DELETE_MARKED}" type="submit">
+	</fieldset>
+</form>
+<!-- ELSE -->
+<div class="errorbox">
+	<p>{L_NO_EVENTS}</p>
+</div>
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->
