@@ -31,6 +31,7 @@ class listener implements EventSubscriberInterface
 			'core.posting_modify_submission_errors'	=> 'check_event',
 			'core.submit_post_end'					=> 'add_event',
 			'core.posting_modify_template_vars'		=> 'edit_event',
+			'core.modify_posting_parameters'		=> 'delete_event',
 		);
 	}
 
@@ -251,7 +252,7 @@ class listener implements EventSubscriberInterface
 			{
 				$sql = 'UPDATE ' . $this->minical_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) .' WHERE topic_id = '. $data['topic_id'] .'';
 			}
-			else if (($mode == 'post' || $mode == 'edit') && !$row['event_id'] && $title)
+			else if (($mode == 'post' || $mode == 'edit'))
 			{
 				$sql = 'INSERT INTO ' . $this->minical_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 			}
@@ -303,5 +304,21 @@ class listener implements EventSubscriberInterface
 			'ADVANCED_FORM_ON'	=> ($cal_interval_date) ? 'checked="checked"' : '',
 			'SHIFT_END'			=> $shift_end,
 		));
+	}
+
+	public function delete_event($event)
+	{
+		$forums = explode(',', $this->config['minical_forums']);
+		if (in_array($event['forum_id'], $forums))
+		{
+			$confirm = $this->request->variable('confirm', false);
+			if ($confirm)
+			{
+				$sql = 'DELETE
+					FROM ' . $this->minical_table . '
+					WHERE post_id = ' . $event['post_id'] . '';
+				$this->db->sql_query($sql);
+			}
+		}
 	}
 }
