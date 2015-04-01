@@ -83,7 +83,6 @@ class minical_module
 		$deletemark	= $request->variable('delmarked', false, false, \phpbb\request\request_interface::POST);
 		$deleteall	= $request->variable('delall', false, false, \phpbb\request\request_interface::POST);
 
-
 		if (($deletemark || $deleteall))
 		{
 			if (confirm_box(true))
