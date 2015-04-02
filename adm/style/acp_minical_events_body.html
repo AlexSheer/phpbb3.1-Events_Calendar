@@ -22,7 +22,7 @@
 		<tbody>
 		<!-- BEGIN events -->
 			<tr>
-				<td>{events.TITLE}</td>
+				<td<!-- IF not events.S_SHOW --> style="background:#888"<!-- ENDIF -->><!-- IF events.S_SHOW --><strong>{events.TITLE}</strong><!-- ELSE --><span style="color:#FFF">{events.TITLE}</span><!-- ENDIF --></td>
 				<td>{events.START}</td>
 				<td>{events.END}</td>
 				<td>{events.SHIFT} {L_DAYS}</td>
