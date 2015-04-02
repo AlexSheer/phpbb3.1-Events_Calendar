@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ACP_MINICAL'					=> 'Events Calendar',
 	'ACP_MINICAL_EXPLAIN'			=> 'Basic settings.',
-	'ACP_MINICAL_ANOUNCE_EXPLAIN'	=> 'Here you can get information about the unexpired events and remove them if necessary.',
+	'ACP_MINICAL_ANOUNCE_EXPLAIN'	=> 'Here you can get information about the unexpired events and remove them if necessary. Detainees announcements are marked in color.',
 
 	'MINICAL_ENABLE'				=> 'Enable Events Calendar',
 	'MINICAL_ENABLE_EXPLAIN'		=> 'If enabled, information about upcoming events and not expired will be displayed above header on each page. Users with the appropriate permission can create announcements of events.',
