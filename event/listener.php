@@ -101,22 +101,12 @@ class listener implements EventSubscriberInterface
 	{
 		if ($this->config['minical_enable'])
 		{
-/*
-			static $utc;
-			$time_zone = ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_timezone'] : $this->config['board_timezone'];
-
-			if (!isset($utc))
-			{
-				$utc = new \DateTimeZone($time_zone);
-			}
-
-			$dt = $this->user->create_datetime('now', $utc);
-*/
 			$offset = $this->get_time_offset();
-			$sql = 'SELECT *
-				FROM '. $this->minical_table . '
-				WHERE event_end > '. (time() - 86400) . '
-				ORDER BY event_start ';
+			$sql = 'SELECT e.event_end, e.event_start, e.post_id, e.shift_end, e.event_title, p.topic_id, p.forum_id, p.topic_id
+				FROM '. $this->minical_table . ' e, ' . POSTS_TABLE . ' p
+				WHERE e.event_end > '. (time() - 86400) . '
+				AND p.post_id = e.post_id
+				ORDER BY e.event_start ';
 			$result = $this->db->sql_query($sql);
 			$count = 0;
 			while($row = $this->db->sql_fetchrow($result))
@@ -126,9 +116,6 @@ class listener implements EventSubscriberInterface
 				{
 					$count++;
 				}
-
-				$ff = $row['event_start'];
-				//print "$ff<br />";
 
 				$this->template->assign_block_vars('events', array(
 					'START'		=> $this->user->format_date(($row['event_start']), 'l, j F Y'),
@@ -175,9 +162,9 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 
-		$event_start = strtotime($this->request->variable('event_start', ''));
-		$event_end = strtotime($this->request->variable('event_end', ''));
 		$title = $this->request->variable('event_title', '', true);
+		$event_start = strtotime($this->request->variable('event_start', ''));
+		$event_end = ($this->request->variable('cal_interval_date', false)) ? strtotime($this->request->variable('event_end', '')) : '';
 
 		if($title)
 		{
@@ -185,7 +172,11 @@ class listener implements EventSubscriberInterface
 			{
 				$event['error'] = array($this->user->lang['END_DATE_ERROR']);
 			}
-			else if (($event_end && $event_end < time()) || $event_start < (time() - (time() - mktime(0, 0, 0))))
+			else if ($event_end && $event_end < time())
+			{
+				$event['error'] = array($this->user->lang['START_DATE_ERROR']);
+			}
+			else if (!$event_end && $event_start < (time() - (time() - mktime(0, 0, 0))))
 			{
 				$event['error'] = array($this->user->lang['START_DATE_ERROR']);
 			}
@@ -219,7 +210,7 @@ class listener implements EventSubscriberInterface
 		{
 			$sql = 'SELECT event_id
 				FROM ' . $this->minical_table . '
-				WHERE topic_id = ' . $data['topic_id'] . '';
+				WHERE post_id = ' . $data['post_id'] . '';
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
@@ -250,8 +241,6 @@ class listener implements EventSubscriberInterface
 				'event_title'	=> $title,
 				'event_start'	=> $event_start + $offset,
 				'event_end'		=> $event_end + $offset,
-				'forum_id'		=> $data['forum_id'],
-				'topic_id'		=> $data['topic_id'],
 				'post_id'		=> $data['post_id'],
 				'shift_end'		=> $shift_end,
 				'author_id'		=> $this->user->data['user_id'],
@@ -259,7 +248,7 @@ class listener implements EventSubscriberInterface
 
 			if ($mode == 'edit' && $row['event_id'] && $title)
 			{
-				$sql = 'UPDATE ' . $this->minical_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) .' WHERE topic_id = '. $data['topic_id'] .'';
+				$sql = 'UPDATE ' . $this->minical_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) .' WHERE post_id = '. $data['post_id'] .'';
 			}
 			else if (($mode == 'post' || $mode == 'edit'))
 			{
@@ -284,7 +273,7 @@ class listener implements EventSubscriberInterface
 
 		$sql = 'SELECT *
 			FROM ' . $this->minical_table . '
-			WHERE topic_id = ' . $event['topic_id'] . '';
+			WHERE post_id = ' . $event['post_id'] . '';
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
