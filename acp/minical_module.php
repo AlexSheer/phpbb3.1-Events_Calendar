@@ -125,14 +125,18 @@ class minical_module
 		$dt = $user->create_datetime('now', $utc);
 		$offset = $dt->getOffset();
 
-		$sql = 'SELECT e.*, u.username, u.user_id, t.topic_id, t.topic_title, t.forum_id
-			FROM ' . $this->minical_table . ' e, '. USERS_TABLE .' u, ' . TOPICS_TABLE . ' t
+		$sql = 'SELECT e.*, u.username, u.user_id, p.forum_id, t.topic_id, t.topic_title
+			FROM ' . $this->minical_table . ' e, '. USERS_TABLE . ' u, ' . POSTS_TABLE . ' p, ' . TOPICS_TABLE . ' t
 			WHERE u.user_id = e.author_id
-			AND t.topic_id = e.topic_id
+			AND p.post_id = e.post_id
+			AND p.topic_id = t.topic_id
 			ORDER BY event_start ASC';
 		$result = $db->sql_query($sql);
+
 		while($row = $db->sql_fetchrow($result))
 		{
+			$rest_time = floor(($row['event_start'] - time()) / 86400);
+
 			$template->assign_block_vars('events', array(
 				'ID'		=> $row['event_id'],
 				'START'		=> $user->format_date(($row['event_start'] - $offset), 'd M Y'),
@@ -141,6 +145,7 @@ class minical_module
 				'SHIFT'		=> $row['shift_end'],
 				'USER'		=> $row['username'],
 				'TOPIC'		=> $row['topic_title'],
+				'S_SHOW'	=> ($rest_time <= $row['shift_end'] || !$row['shift_end']) ? true : false,
 				'U_TOPIC'	=> append_sid("{$phpbb_root_path}/viewtopic.$phpEx", 'f=' . $row['forum_id'] . '&amp;t=' . $row['topic_id'] . '')
 				)
 			);
