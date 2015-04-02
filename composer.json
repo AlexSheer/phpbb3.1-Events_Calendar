@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Events Calendar",
     "homepage": "http://phpbbguru.net",
-    "version": "1.0.1",
-    "time": "2015-04-01",
+    "version": "1.0.2",
+    "time": "2015-04-02",
     "license": "GPL-2.0",
     "authors": [
         {
