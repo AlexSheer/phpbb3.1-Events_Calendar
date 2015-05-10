@@ -324,6 +324,10 @@ class listener implements EventSubscriberInterface
 	{
 		static $utc;
 		$time_zone = ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_timezone'] : $this->config['board_timezone'];
+		if (empty($time_zone))
+		{
+			$time_zone = 'UTC';
+		}
 
 		if (!isset($utc))
 		{
