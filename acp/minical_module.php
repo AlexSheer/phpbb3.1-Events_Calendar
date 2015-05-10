@@ -114,7 +114,7 @@ class minical_module
 			}
 		}
 
-				static $utc;
+		static $utc;
 		$time_zone = ($user->data['user_timezone']) ? $user->data['user_timezone'] : 'UTC';
 
 		if (!isset($utc))
