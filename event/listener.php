@@ -32,6 +32,7 @@ class listener implements EventSubscriberInterface
 			'core.submit_post_end'					=> 'add_event',
 			'core.posting_modify_template_vars'		=> 'edit_event',
 			'core.modify_posting_parameters'		=> 'delete_event',
+			'core.permissions'						=> 'add_permission',
 		);
 	}
 
@@ -337,5 +338,12 @@ class listener implements EventSubscriberInterface
 		$dt = $this->user->create_datetime('now', $utc);
 		$offset = $dt->getOffset() + date('I') * 3600;
 		return($offset);
+	}
+
+	public function add_permission($event)
+	{
+		$permissions = $event['permissions'];
+		$permissions['u_add_event'] = array('lang' => 'ACL_U_ADD_EVENT', 'cat' => 'misc');
+		$event['permissions'] = $permissions;
 	}
 }
